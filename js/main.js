@@ -12,9 +12,6 @@ document.addEventListener("DOMContentLoaded", function(){
 			onRequest : function(request){
 				console.log("reading info", { request : request });
 				
-				//return new Promise(function(resolve, reject){
-				//	resolve("Hello World!");
-				//});
 				return Ajax.promiseRequest({
 					url : "file:///C:/Users/dkumagai1/Desktop/ext/ChromeServer/manifest.json"
 				});

@@ -28,12 +28,12 @@ var HttpServer = (function(){
 	function setup(){
 		var self = this;
 		console.log("creating socket");
-		chrome.socket.create("tcp", {}, function(createInfo){
+		chrome.sockets.tcpServer.create({}, function(createInfo){
 			self.socketId = createInfo.socketId;
 			console.log("socket created with id: " + createInfo.socketId);
-			chrome.socket.listen(createInfo.socketId, self.ip, self.port, 50, function(result){
+			chrome.socket.tcpServer.listen(createInfo.socketId, self.ip, self.port, 50, function(result){
 				console.log("listening on: " + self.ip + ":" + self.port + ". Result code: " + result);
-				chrome.socket.accept(self.socketId, self.onAccept);
+				chrome.sockets.tcpServer.onAccept.addListener(self.onAccept);
 				self.onopen(createInfo);
 			});
 		});

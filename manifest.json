@@ -12,7 +12,14 @@
 	  "<all_urls>",
 	  "storage",
 	  {
-		  "socket" : ["tcp-connect", "tcp-listen"]
+		  "sockets" : {
+		    "tcpServer" : {
+		      "listen" : ""
+		    },
+		    "tcp" : {
+		      "connect" : ""
+		    }
+		  }
 	  },
 	  {
 	    "fileSystem" : ["directory", "retainEntries"]

@@ -28,23 +28,25 @@ var HttpParser = (function(){
 		requestLineObject.httpVersion = requestLineSplit[2];
 		return requestLineObject;
 	}
-	
-	function stringifyResponse(response){
+
+	function responseToBuffer(response){
 		var responseText = "";
-		responseText += getResponseResponseLine(response) + "\r\n";
+		responseText += getResponseLine(response) + "\r\n";
 		responseText += getResponseHeaders(response) + "\r\n\r\n";
 		if(response.body){
 			responseText += response.body + "\r\n\r\n";
 		}
 		var responseBuffer = Util.stringToArrayBuffer(responseText);
+		return responseBuffer;
 	}
 	function getResponseLine(response){
 		var responseLineText = "";
-		responseLineText = response.httpVersion + " ";
-		responseLineText = response.statusCode + " ";
-		responseLineText = response.status;
+		responseLineText += response.httpVersion + " ";
+		responseLineText += response.statusCode + " ";
+		responseLineText += response.status;
+		return responseLineText;
 	}
-	function getHeaders(response){
+	function getResponseHeaders(response){
 		responseHeaders = [];
 		for(var key in response.headers){
 			responseHeaders.push(key + ": " + response.headers[key]);
@@ -54,7 +56,7 @@ var HttpParser = (function(){
 
 	return {
 		parseRequest : parseRequest,
-		stringifyResponse : stringifyResponse
+		responseToBuffer : responseToBuffer
 	};
 
 })();

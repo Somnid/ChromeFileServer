@@ -42,30 +42,32 @@ var HttpServer = (function(){
 	function onAccept(acceptInfo){
 		var self = this;
 		console.log("accepted connection", acceptInfo);
-		chrome.socket.read(acceptInfo.socketId, null, function(readInfo){
-			var request = HttpParser.parseRequest(readInfo);
-			self.onrequest(request).then(function(response){
-				var responseBuffer = HttpParser.responseToBuffer(response);
-				chrome.socket.write(acceptInfo.socketId, responseBuffer, function(writeInfo){
-					console.log("wrote data", writeInfo);
-					chrome.socket.destroy(acceptInfo.socketId);
-					console.log("destroyed socket");
-				});
-			}).catch(function(error){
-			  self.onError(error);
-				chrome.socket.destroy(acceptInfo.socketId);
+		chrome.sockets.tcp.onRecieve(acceptInfo.socketId, self.onReceive);
+		chrome.sockets.tcp.setPaused(false);
+	}
+	
+	function onReceive(receiveInfo){
+	  var request = HttpParser.parseRequest(receiveInfo);
+		self.onrequest(request).then(function(response){
+			var responseBuffer = HttpParser.responseToBuffer(response);
+			chrome.sockets.tcp.send(receiveInfo.socketId, responseBuffer, function(sendInfo){
+				console.log("sent data", sendInfo);
 			});
+		}).catch(function(error){
+		  self.onError(error);
+			chrome.socket.destroy(acceptInfo.socketId);
 		});
 	}
 
 	function kill(){
 		console.log("destroying socket", this.socketId);
-		chrome.socket.destroy(this.socketId);
+		chrome.sockets.tcpServer.onAccept.removeListener(this.onAccept);
+		chrome.sockets.tcp.disconnect(this.socketId);
 		this.onkill();
 	}
 
 	function status(callback){
-		chrome.socket.getInfo(this.socketId, callback);
+		chrome.sockets.tcpServer.getInfo(this.socketId, callback);
 	}
 
 	return {

@@ -8,19 +8,17 @@
       "scripts" : ["js/background.js"]
     }
   },
+  "sockets" : {
+	  "tcpServer" : {
+		  "listen" : ""
+	   },
+		"tcp" : {
+	    "connect" : ""
+	  }
+	},
   "permissions" : [
 	  "<all_urls>",
 	  "storage",
-	  {
-		  "sockets" : {
-		    "tcpServer" : {
-		      "listen" : ""
-		    },
-		    "tcp" : {
-		      "connect" : ""
-		    }
-		  }
-	  },
 	  {
 	    "fileSystem" : ["directory", "retainEntries"]
 	  }

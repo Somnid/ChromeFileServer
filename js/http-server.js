@@ -4,6 +4,7 @@ var HttpServer = (function(){
 		var server = {};
 		server.port = options.port || 8181;
 		server.ip = options.ip || "127.0.0.1";
+		server.clientsSockets = [];
 
 		server.onopen = options.onOpen || function(){};
 		server.onrequest = options.onRequest || function(){};
@@ -23,6 +24,7 @@ var HttpServer = (function(){
 		server.kill = kill.bind(server);
 		server.status = status.bind(server);
 		server.onAccept = onAccept.bind(server);
+		server.onReceive = onReceive.bind(server);
 	}
 
 	function setup(){
@@ -31,7 +33,10 @@ var HttpServer = (function(){
 		chrome.sockets.tcpServer.create({}, function(createInfo){
 			self.socketId = createInfo.socketId;
 			console.log("socket created with id: " + createInfo.socketId);
-			chrome.socket.tcpServer.listen(createInfo.socketId, self.ip, self.port, function(result){
+			chrome.sockets.tcpServer.listen(createInfo.socketId, self.ip, self.port, function(result){
+				if(result < 0){
+				  console.log(chrome.runtime.lastError.message);
+				}
 				console.log("listening on: " + self.ip + ":" + self.port + ". Result code: " + result);
 				chrome.sockets.tcpServer.onAccept.addListener(self.onAccept);
 				self.onopen(createInfo);
@@ -40,14 +45,14 @@ var HttpServer = (function(){
 	}
 
 	function onAccept(acceptInfo){
-		var self = this;
 		console.log("accepted connection", acceptInfo);
-		chrome.sockets.tcp.onRecieve(acceptInfo.socketId, self.onReceive);
-		chrome.sockets.tcp.setPaused(false);
+		this.clientSockets.push(acceptInfo.socketId);
+		chrome.sockets.tcp.onRecieve(acceptInfo.socketId, this.onReceive);
+		chrome.sockets.tcp.setPaused(acceptInfo.socketId, false);
 	}
 	
 	function onReceive(receiveInfo){
-	  var request = HttpParser.parseRequest(receiveInfo);
+    var request = HttpParser.parseRequest(receiveInfo);
 		self.onrequest(request).then(function(response){
 			var responseBuffer = HttpParser.responseToBuffer(response);
 			chrome.sockets.tcp.send(receiveInfo.socketId, responseBuffer, function(sendInfo){
@@ -62,7 +67,9 @@ var HttpServer = (function(){
 	function kill(){
 		console.log("destroying socket", this.socketId);
 		chrome.sockets.tcpServer.onAccept.removeListener(this.onAccept);
-		chrome.sockets.tcp.disconnect(this.socketId);
+		this.clientSockets.forEach(function(socketId){
+		  chrome.sockets.tcp.disconnect(socketId);
+		})
 		this.onkill();
 	}
 

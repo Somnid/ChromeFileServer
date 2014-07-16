@@ -33,10 +33,11 @@ var HttpParser = (function(){
 		var responseText = "";
 		responseText += getResponseLine(response) + "\r\n";
 		responseText += getResponseHeaders(response) + "\r\n\r\n";
-		if(response.body){
+		if(response.body && typeof(response.body) == "string"){
 			responseText += response.body + "\r\n\r\n";
 		}
 		var responseBuffer = Util.stringToArrayBuffer(responseText);
+		responseBuffer
 		return responseBuffer;
 	}
 	function getResponseLine(response){

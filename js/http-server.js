@@ -4,7 +4,7 @@ var HttpServer = (function(){
 		var server = {};
 		server.port = options.port || 8181;
 		server.ip = options.ip || "127.0.0.1";
-		server.clientsSockets = [];
+		server.clientSockets = [];
 
 		server.onopen = options.onOpen || function(){};
 		server.onrequest = options.onRequest || function(){};
@@ -22,9 +22,9 @@ var HttpServer = (function(){
 	  server.setup = setup.bind(server);
 
 		server.kill = kill.bind(server);
-		server.status = status.bind(server);
 		server.onAccept = onAccept.bind(server);
 		server.onReceive = onReceive.bind(server);
+		server.onReceiveError = onReceiveError.bind(server);
 	}
 
 	function setup(){
@@ -46,12 +46,15 @@ var HttpServer = (function(){
 
 	function onAccept(acceptInfo){
 		console.log("accepted connection", acceptInfo);
-		this.clientSockets.push(acceptInfo.socketId);
-		chrome.sockets.tcp.onRecieve(acceptInfo.socketId, this.onReceive);
-		chrome.sockets.tcp.setPaused(acceptInfo.socketId, false);
+		this.clientSockets.push(acceptInfo.clientSocketId);
+		chrome.sockets.tcp.onReceive.addListener(this.onReceive);
+		chrome.sockets.tcp.onReceiveError.addListener(this.onReceiveError);
+		chrome.sockets.tcp.setPaused(acceptInfo.clientSocketId, false);
 	}
-	
+
 	function onReceive(receiveInfo){
+	  var self = this;
+    console.log("received connection", receiveInfo);
     var request = HttpParser.parseRequest(receiveInfo);
 		self.onrequest(request).then(function(response){
 			var responseBuffer = HttpParser.responseToBuffer(response);
@@ -73,8 +76,14 @@ var HttpServer = (function(){
 		this.onkill();
 	}
 
-	function status(callback){
-		chrome.sockets.tcpServer.getInfo(this.socketId, callback);
+	function getInfo(socketId){
+	  return new Promise(function(resolve, reject){
+	    chrome.sockets.tcpServer.getInfo(socketId, resolve);
+	  });
+	}
+
+	function onReceiveError(info){
+	  console.error(info);
 	}
 
 	return {

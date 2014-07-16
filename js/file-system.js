@@ -1,8 +1,8 @@
 var FileSystem = (function(){
-  function getUserFolder(){
+  function getUserFolder(force){
     return new Promise(function(resolve, reject){
       chrome.storage.local.get("folderRef", function(results){
-        if(results.folderRef){
+        if(results.folderRef && !force){
           retrieveFolder(results.folderRef).then(resolve);
         }else{
           askForFolder().then(resolve);
@@ -26,7 +26,20 @@ var FileSystem = (function(){
       });
     });
   }
+  function readFile(file){
+    return new Promise(function(resolve, reject){
+      var fileReader = new FileReader();
+      fileReader.onload = function(e){
+        resolve(e.target.result);
+      }
+      fileReader.onerror = function(e){
+        reject(e);
+      }
+      fileReader.readAsArrayBuffer(file);
+    });
+  }
   return {
-    getUserFolder : getUserFolder
+    getUserFolder : getUserFolder,
+    readFile : readFile
   };
 })();

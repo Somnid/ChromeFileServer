@@ -45,10 +45,24 @@ var HttpHelper= (function(){
 		return response;
 	}
 
+	function fileResponse(fileEntry, data){
+	  var response = {};
+	  response.httpVersion = "HTTP/1.1";
+	  response.statusCode = 200;
+	  response.status = "OK";
+	  response.headers = {
+	    "Content-Type" : MimeMapper.map(FileHelper.getExtension(fileEntry.name)),
+	    "Content-Length" data.byteLength:
+	  }
+	  response.body = data;
+	  return response
+	}
+
 	return {
 		okResponse : okResponse,
 		notFoundResponse : notFoundResponse,
-		serverErrorResponse : serverErrorResponse
+		serverErrorResponse : serverErrorResponse,
+		fileResponse : fileResponse
 	};
 
 })();

@@ -10,10 +10,10 @@
   },
   "sockets" : {
 	  "tcpServer" : {
-		  "listen" : ""
+		  "listen" : "*"
 	   },
 		"tcp" : {
-	    "connect" : ""
+	    "connect" : "*"
 	  }
 	},
   "permissions" : [

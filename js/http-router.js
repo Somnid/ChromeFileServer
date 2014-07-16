@@ -14,9 +14,10 @@ var Router = (function(){
       if(FileHelper.isDirectory(uri)){
         uri += "index.html";
       }
-      this.fsRoot.getFile(uri, { create : false }, function(file){
-				console.log(file);
-				resolve(file);
+      this.fsRoot.getFile(uri, { create : false }, function(fileEntry){
+				FileSystem.readFile(fileEntry).then(function(data){
+				  resolve(HttpHelper.fileResponse(fileEntry, data));
+				});
 			},function(error){
 				if(error.name == "NotFoundError"){
 				  resolve(HttpHelper.notFoundResponse("Not Found :("));

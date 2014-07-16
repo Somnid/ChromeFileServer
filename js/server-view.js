@@ -62,15 +62,15 @@ var ServerView = (function(){
 		this.dom.serverInfo.href = "http://" + this.ip + ":" + this.port;
   }
   function onLocationClick(){
-    this.getUserFolder();
+    this.getUserFolder(true);
   }
   function onKillClick(){
     this.dom.startButton.disabled = true;
 		this.dom.killButton.disabld = false;
 		this.server.kill();
   }
-  function getUserFolder(){
-    FileSystem.getUserFolder().then(function(entry){
+  function getUserFolder(force){
+    FileSystem.getUserFolder(force).then(function(entry){
 		  this.fsRoot = entry;
 		}.bind(this));
   }

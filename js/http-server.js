@@ -39,6 +39,8 @@ var HttpServer = (function(){
 				}
 				console.log("listening on: " + self.ip + ":" + self.port + ". Result code: " + result);
 				chrome.sockets.tcpServer.onAccept.addListener(self.onAccept);
+				chrome.sockets.tcp.onReceive.addListener(self.onReceive);
+		    chrome.sockets.tcp.onReceiveError.addListener(self.onReceiveError);
 				self.onopen(createInfo);
 			});
 		});
@@ -47,8 +49,6 @@ var HttpServer = (function(){
 	function onAccept(acceptInfo){
 		console.log("accepted connection", acceptInfo);
 		this.clientSockets.push(acceptInfo.clientSocketId);
-		chrome.sockets.tcp.onReceive.addListener(this.onReceive);
-		chrome.sockets.tcp.onReceiveError.addListener(this.onReceiveError);
 		chrome.sockets.tcp.setPaused(acceptInfo.clientSocketId, false);
 	}
 

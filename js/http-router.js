@@ -11,6 +11,7 @@ var Router = (function(){
   function route(uri){
     return new Promise(function(resolve, reject){
       uri = FileHelper.removePreceedingSlash(uri);
+      uri = FileHelper.removeQueryString(uri);
       if(FileHelper.isDirectory(uri)){
         uri += "index.html";
       }

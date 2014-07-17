@@ -35,10 +35,12 @@ var HttpParser = (function(){
 		responseText += getResponseHeaders(response) + "\r\n\r\n";
 		if(response.body && typeof(response.body) == "string"){
 			responseText += response.body + "\r\n\r\n";
+			return Util.stringToArrayBuffer(responseText);
+		}else if(response.body instanceof ArrayBuffer){
+		  var headerBuffer = Util.stringToArrayBuffer(responseText);
+		  var bodyBuffer = response.body;
+		  return BufferHelper.concat(headerBuffer, bodyBuffer);
 		}
-		var responseBuffer = Util.stringToArrayBuffer(responseText);
-		responseBuffer
-		return responseBuffer;
 	}
 	function getResponseLine(response){
 		var responseLineText = "";

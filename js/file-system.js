@@ -26,16 +26,18 @@ var FileSystem = (function(){
       });
     });
   }
-  function readFile(file){
+  function readFile(fileEntry){
     return new Promise(function(resolve, reject){
-      var fileReader = new FileReader();
-      fileReader.onload = function(e){
-        resolve(e.target.result);
-      }
-      fileReader.onerror = function(e){
-        reject(e);
-      }
-      fileReader.readAsArrayBuffer(file);
+      fileEntry.file(function(file){
+        var fileReader = new FileReader();
+        fileReader.onload = function(e){
+          resolve(e.target.result);
+        };
+        fileReader.onerror = function(e){
+          reject(e);
+        };
+        fileReader.readAsArrayBuffer(file);
+      });
     });
   }
   return {

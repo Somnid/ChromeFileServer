@@ -51,9 +51,9 @@ var HttpHelper= (function(){
 	  response.statusCode = 200;
 	  response.status = "OK";
 	  response.headers = {
-	    "Content-Type" : MimeMapper.map(FileHelper.getExtension(fileEntry.name)),
-	    "Content-Length" data.byteLength:
-	  }
+	    "Content-Type" : MimeMapper.mapMimeType(FileHelper.getExtension(fileEntry.name)),
+	    "Content-Length" : data.byteLength
+	  };
 	  response.body = data;
 	  return response
 	}

@@ -18,6 +18,9 @@ var ServerView = (function(){
     serverView.onLocationClick = onLocationClick.bind(serverView);
     serverView.onKillClick = onKillClick.bind(serverView);
     serverView.getUserFolder = getUserFolder.bind(serverView);
+    serverView.onRequest = onRequest.bind(serverView);
+    serverView.onKill = onKill.bind(serverView);
+    serverView.onServerError = onServerError.bind(serverView);
   }
   function gatherSelectors(){
     this.dom.startButton = document.getElementById("btn-start");
@@ -46,20 +49,24 @@ var ServerView = (function(){
 		this.server = HttpServer.create({
 			port : this.port,
 			ip : this.ip,
-			onRequest : function(request){
-				console.log("reading info", { request : request });
-				return this.router.route(request.uri);
-			}.bind(this),
-			onKill : function(){
-				this.dom.startButton.disabled = false;
-				this.dom.killButton.disabled = true;
-			}.bind(this),
-			onError : function(error){
-			  console.error(error);
-			}
+			onRequest : this.onRequest,
+			onKill : this.onKill,
+			onError : this.onServerError
 		});
+		
 		this.dom.serverInfo.innerText = this.ip + ":" + this.port;
 		this.dom.serverInfo.href = "http://" + this.ip + ":" + this.port;
+  }
+  function onRequest(request){
+    console.log("reading info", { request : request });
+		return this.router.route(request.uri);
+  }
+  function onKill(){
+    this.dom.startButton.disabled = false;
+		this.dom.killButton.disabled = true;
+  }
+  function onServerError(error){
+    console.error(error);
   }
   function onLocationClick(){
     this.getUserFolder(true);

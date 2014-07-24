@@ -7,4 +7,16 @@ html {
 #server-info {
   -webkit-user-select: text;
   display: block;
+  font-size: 16px;
+  text-align: center;
+}
+body {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+}
+button {
+  background: none;
+  border: 2px solid #cccccc;
+  border-radius: 6px;
 }

@@ -5,7 +5,10 @@
   "manifest_version": 2,
   "app": {
     "background": {
-      "scripts" : ["js/background.js"]
+      "scripts" : [
+        "js/chrome-com.js",
+        "js/background.js"
+      ]
     }
   },
   "sockets" : {

@@ -3,4 +3,6 @@ chrome.app.runtime.onLaunched.addListener(function() {
 		width: 400,
 		height: 400
 	});
+	var chromeCom = ChromeCom.create();
+	chromeCom.register("server", HttpServer.create());
 });

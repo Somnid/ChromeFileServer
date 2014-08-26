@@ -6,6 +6,7 @@
   "app": {
     "background": {
       "scripts" : [
+        "js/chromep.js",
         "js/chrome-com.js",
         "js/background.js"
       ]

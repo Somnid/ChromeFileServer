@@ -1,3 +1,4 @@
 document.addEventListener("DOMContentLoaded", function(){
-  ServerView.create();
+  var chromeCom = ChromeCom.create();
+  chromeCom.register(ServerView.create());
 }, true);

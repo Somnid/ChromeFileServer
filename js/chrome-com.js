@@ -39,7 +39,7 @@ var ChromeCom = (function(){
     }
   }
   function parseRequestKey(requestKey){
-    var split = request.split(":");
+    var split = request.split(".");
     return {
       name : split[0],
       method : split[1]

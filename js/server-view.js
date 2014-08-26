@@ -5,6 +5,7 @@ var ServerView = (function(){
     serverView.ip = "127.0.0.1";
     serverView.port = 9009;
     serverView.fs = null;
+    serverView.chromeCom = ChromeCom.create("server-channel");
     bind(serverView);
     serverView.gatherSelectors();
     serverView.attachEvents();
@@ -45,13 +46,10 @@ var ServerView = (function(){
 		this.router = Router.create({
 		  fsRoot : this.fsRoot
 		});
-
-		this.server = HttpServer.create({
-			port : this.port,
-			ip : this.ip,
-			onRequest : this.onRequest,
-			onKill : this.onKill,
-			onError : this.onServerError
+		
+		this.chromeCom("server.setup", {
+		  port : this.port,
+		  ip = this.ip
 		});
 		
 		this.dom.serverInfo.innerText = this.ip + ":" + this.port;

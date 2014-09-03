@@ -2,13 +2,10 @@ var ServerView = (function(){
   function create(){
     var serverView = {};
     serverView.dom = {};
-    serverView.ip = "127.0.0.1";
-    serverView.port = 9009;
-    serverView.fs = null;
+    serverView.chromeCom = ChromeCom.create("server-channel");
     bind(serverView);
     serverView.gatherSelectors();
     serverView.attachEvents();
-    serverView.getUserFolder();
     return serverView;
   }
   function bind(serverView){
@@ -18,7 +15,6 @@ var ServerView = (function(){
     serverView.onLocationClick = onLocationClick.bind(serverView);
     serverView.onKillClick = onKillClick.bind(serverView);
     serverView.getUserFolder = getUserFolder.bind(serverView);
-    serverView.onRequest = onRequest.bind(serverView);
     serverView.onKill = onKill.bind(serverView);
     serverView.onServerError = onServerError.bind(serverView);
   }
@@ -42,24 +38,13 @@ var ServerView = (function(){
 		this.dom.startButton.disabled = true;
 		this.dom.killButton.disabled = false;
 
-		this.router = Router.create({
-		  fsRoot : this.fsRoot
+		this.chromeCom("server.setup", {
+		  port : this.port,
+		  ip : this.ip
 		});
 
-		this.server = HttpServer.create({
-			port : this.port,
-			ip : this.ip,
-			onRequest : this.onRequest,
-			onKill : this.onKill,
-			onError : this.onServerError
-		});
-		
 		this.dom.serverInfo.innerText = this.ip + ":" + this.port;
 		this.dom.serverInfo.href = "http://" + this.ip + ":" + this.port;
-  }
-  function onRequest(request){
-    console.log("reading info", { request : request });
-		return this.router.route(request.uri);
   }
   function onKill(){
     this.dom.startButton.disabled = false;

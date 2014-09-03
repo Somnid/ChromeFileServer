@@ -2,8 +2,6 @@ var HttpServer = (function(){
 
 	function create(options){
 		var server = {};
-		server.port = options.port || 8181;
-		server.ip = options.ip || "127.0.0.1";
 		server.clientSockets = [];
 
 		server.onopen = options.onOpen || function(){};
@@ -13,22 +11,26 @@ var HttpServer = (function(){
 
 		bind(server);
 
-		server.setup();
-
+    if(options.autoStart){
+		  server.setup(options);
+    }
 		return server;
 	}
 
 	function bind(server){
 	  server.setup = setup.bind(server);
-
 		server.kill = kill.bind(server);
 		server.onAccept = onAccept.bind(server);
 		server.onReceive = onReceive.bind(server);
 		server.onReceiveError = onReceiveError.bind(server);
 	}
 
-	function setup(){
+	function setup(options){
 		var self = this;
+
+		server.port = options.port || 8181;
+		server.ip = options.ip || "127.0.0.1";
+
 		console.log("creating socket");
 		chrome.sockets.tcpServer.create({}, function(createInfo){
 			self.socketId = createInfo.socketId;
@@ -72,7 +74,8 @@ var HttpServer = (function(){
 		chrome.sockets.tcpServer.onAccept.removeListener(this.onAccept);
 		this.clientSockets.forEach(function(socketId){
 		  chrome.sockets.tcp.disconnect(socketId);
-		})
+		});
+		this.clientSockets = [];
 		this.onkill();
 	}
 

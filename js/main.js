@@ -1,3 +1,5 @@
 document.addEventListener("DOMContentLoaded", function(){
-  ServerView.create();
+  setTimeout(function(){
+    ServerView.create();
+  }, 3000);
 }, true);

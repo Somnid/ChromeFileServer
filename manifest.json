@@ -1,11 +1,24 @@
 {
-  "name": "Chrome File Server",
-  "version": "1.0",
+  "name": "Chrome File Server (bg edition)",
+  "version": "1.1",
   "description": "Description",
   "manifest_version": 2,
   "app": {
     "background": {
-      "scripts" : ["js/background.js"]
+      "scripts" : [
+        "js/buffer-helper.js",
+        "js/file-helper.js",
+        "js/file-system.js",
+        "js/http-helper.js",
+        "js/http-parser.js",
+        "js/http-router.js",
+        "js/mime-mapper.js",
+        "js/http-server.js",
+        "js/chromep.js",
+        "js/chrome-com.js",
+        "js/file-server.js",
+        "js/background.js"
+      ]
     }
   },
   "sockets" : {

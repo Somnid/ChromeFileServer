@@ -1,5 +1,5 @@
 var Util = (function(){
-	
+
 	function arrayBufferToString(arrayBuffer, start, length){
 		start = start || 0;
 		length = length || arrayBuffer.byteLength;
@@ -10,21 +10,30 @@ var Util = (function(){
 		}
 		return newString;
 	}
-	
+
 	function stringToArrayBuffer(string){
 		var arrayBuffer = new ArrayBuffer(string.length);
 		var uInt8Array = new Uint8Array(arrayBuffer);
-		
+
 		for (var i = 0; i < string.length; i++) {
 			uInt8Array[i] = string.charCodeAt(i);
 		}
-		
+
 		return arrayBuffer;
 	}
-	
+
+	function wait(timeout){
+	  return new Promise(function(resolve, reject){
+	    setTimeout(function(){
+	      resolve();
+	    }, timeout);
+	  });
+	}
+
 	return {
 		stringToArrayBuffer : stringToArrayBuffer,
-		arrayBufferToString : arrayBufferToString
+		arrayBufferToString : arrayBufferToString,
+		wait : wait
 	};
 
 })();

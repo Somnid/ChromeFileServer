@@ -15,13 +15,18 @@ var ChromeCom = (function(){
     chromeCom.createChannel = createChannel.bind(chromeCom);
     chromeCom.attachEvents = attachEvents.bind(chromeCom);
     chromeCom.request = request.bind(chromeCom);
+    chromeCom.respond = respond.bind(chromeCom);
     chromeCom.requestBulk = requestBulk.bind(chromeCom);
+    chromeCom.onDisconnect = onDisconnect.bind(chromeCom);
   }
   function createChannel(){
+    console.log("!!");
     this.channel = chrome.runtime.connect({ name : this.options.channelName });
+    console.log("/!!");
   }
   function attachEvents(){
     this.channel.onMessage.addListener(this.respond);
+    this.channel.onDisconnect.addListener(this.onDisconnect);
   }
   function register(name, obj){
     this.registery[name] = obj;
@@ -48,12 +53,17 @@ var ChromeCom = (function(){
     };
   }
   function requestBulk(request){
+    console.log("!");
     this.channel.postMessage(request)
   }
   function request(route, payload){
+    console.log("!");
     var message = {};
     message[route] = payload;
     this.channel.postMessage(message);
+  }
+  function onDisconnect(e){
+    console.log("Socket was closed", e, chrome.runtime.lastError);
   }
   return {
     create : create

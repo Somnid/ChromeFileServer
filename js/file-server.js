@@ -1,9 +1,11 @@
 var FileServer = (function(){
   function create(options){
-    var fileServer = {};
-    bind(fileServer);
-    fileServer.setup(options);
-    return fileServer;
+    return new Promise(function(resolve, reject){
+      var fileServer = {};
+      bind(fileServer);
+      fileServer.setup(options);
+      resolve(fileServer);
+    });
   }
   function bind(fileServer){
     fileServer.setup = setup.bind(fileServer);
@@ -14,10 +16,10 @@ var FileServer = (function(){
 
   }
   function setup(options){
-    FileSystem.getUserFolder(true)
+    this.options = options;
+    return FileSystem.getUserFolder()
       .then(setFileSystemRoot)
       .then(createChannels);
-
   }
   function createChannels(options){
     this.serverChannel = ChromeCom.create("server-channel");

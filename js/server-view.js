@@ -5,12 +5,14 @@ var ServerView = (function(){
     serverView.chromeCom = ChromeCom.create("server-channel");
     bind(serverView);
     serverView.gatherSelectors();
-    serverView.attachEvents();
+    serverView.getStoredData()
+      .then(serverView.attachEvents);
     return serverView;
   }
   function bind(serverView){
     serverView.gatherSelectors = gatherSelectors.bind(serverView);
     serverView.attachEvents = attachEvents.bind(serverView);
+    serverView.getStoredData = getStoredData.bind(serverView);
     serverView.onStartClick = onStartClick.bind(serverView);
     serverView.onLocationClick = onLocationClick.bind(serverView);
     serverView.onKillClick = onKillClick.bind(serverView);
@@ -35,10 +37,10 @@ var ServerView = (function(){
 	    return;
 	  }
 
-		this.dom.startButton.disabled = true;
+		//this.dom.startButton.disabled = true;
 		this.dom.killButton.disabled = false;
 
-		this.chromeCom("server.setup", {
+		this.chromeCom.request("server.setup", {
 		  port : this.port,
 		  ip : this.ip
 		});
@@ -65,6 +67,13 @@ var ServerView = (function(){
     FileSystem.getUserFolder(force).then(function(entry){
 		  this.fsRoot = entry;
 		}.bind(this));
+  }
+  function getStoredData(){
+    var self = this;
+    return chromep.storage.local.get(["ip", "port"]).then(function(items){
+      self.ip = items.ip || "127.0.0.1";
+      self.port = items.port || "8788";
+    });
   }
   return {
     create : create

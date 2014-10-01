@@ -13,9 +13,13 @@ var FileSystem = (function(){
   function askForFolder(){
     return new Promise(function(resolve, reject){
       chrome.fileSystem.chooseEntry({ type : "openDirectory" }, function(entry, fileEntries){
-        var entryId = chrome.fileSystem.retainEntry(entry);
-        chrome.storage.local.set({ folderRef :  entryId });
-        resolve(entry, entryId);
+        if(!entry){
+          reject("Entry was not valid or chrome has prevented the action.");
+        }else{
+          var entryId = chrome.fileSystem.retainEntry(entry);
+          chrome.storage.local.set({ folderRef :  entryId });
+          resolve(entry, entryId);
+        }
       });
     });
   }

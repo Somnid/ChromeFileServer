@@ -1,5 +1,26 @@
 var chromep = {}
 
+chromep.app = (function(){
+
+  var window = (function(){
+    function create(url, options){
+      return new Promise(function(resolve, reject){
+        chrome.app.window.create(url, options, function(createdWindow){
+          resolve(createdWindow);
+        });
+      });
+    }
+    return {
+      create : create
+    };
+  })();
+
+  return {
+    window : window
+  };
+
+})();
+
 chromep.runtime = (function(){
 
   function sendMessage(extensionId, message, options){
@@ -52,9 +73,9 @@ chromep.tabs = (function(){
 chromep.storage = (function(){
 
   var sync = (function(){
-    
+
   })();
-  
+
   var local = (function(){
     function get(keys){
       return new Promise(function(resolve, reject){
@@ -75,9 +96,9 @@ chromep.storage = (function(){
       get : get
     };
   })();
-  
+
   var managed = (function(){
-    
+
   })();
 
   return {

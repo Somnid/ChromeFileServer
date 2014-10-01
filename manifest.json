@@ -17,6 +17,7 @@
         "js/chromep.js",
         "js/chrome-com.js",
         "js/file-server.js",
+        "js/server-background-controller.js",
         "js/background.js"
       ]
     }

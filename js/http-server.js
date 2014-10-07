@@ -3,6 +3,7 @@ var HttpServer = (function(){
 	function create(options){
 		var server = {};
 		server.clientSockets = [];
+		server.running = false;
 
 		server.onopen = options.onOpen || function(){};
 		server.onrequest = options.onRequest || function(){};
@@ -11,14 +12,14 @@ var HttpServer = (function(){
 
 		bind(server);
 
-    if(options.autoStart){
+    	if(options.autoStart){
 		  server.setup(options);
-    }
+    	}
 		return server;
 	}
 
 	function bind(server){
-	  server.setup = setup.bind(server);
+		server.setup = setup.bind(server);
 		server.kill = kill.bind(server);
 		server.onAccept = onAccept.bind(server);
 		server.onReceive = onReceive.bind(server);
@@ -28,21 +29,21 @@ var HttpServer = (function(){
 	function setup(options){
 		var self = this;
 
-		server.port = options.port || 8181;
-		server.ip = options.ip || "127.0.0.1";
+		options.port = parseInt(options.port);
 
 		console.log("creating socket");
 		chrome.sockets.tcpServer.create({}, function(createInfo){
 			self.socketId = createInfo.socketId;
 			console.log("socket created with id: " + createInfo.socketId);
-			chrome.sockets.tcpServer.listen(createInfo.socketId, self.ip, self.port, function(result){
+			chrome.sockets.tcpServer.listen(createInfo.socketId, options.ip, options.port, function(result){
 				if(result < 0){
 				  console.log(chrome.runtime.lastError.message);
 				}
-				console.log("listening on: " + self.ip + ":" + self.port + ". Result code: " + result);
+				console.log("listening on: " + options.ip + ":" + options.port + ". Result code: " + result);
 				chrome.sockets.tcpServer.onAccept.addListener(self.onAccept);
 				chrome.sockets.tcp.onReceive.addListener(self.onReceive);
-		    chrome.sockets.tcp.onReceiveError.addListener(self.onReceiveError);
+				self.running = true;
+		    	chrome.sockets.tcp.onReceiveError.addListener(self.onReceiveError);
 				self.onopen(createInfo);
 			});
 		});
@@ -56,8 +57,8 @@ var HttpServer = (function(){
 
 	function onReceive(receiveInfo){
 	  var self = this;
-    console.log("received connection", receiveInfo);
-    var request = HttpParser.parseRequest(receiveInfo);
+    	console.log("received connection", receiveInfo);
+    	var request = HttpParser.parseRequest(receiveInfo);
 		self.onrequest(request).then(function(response){
 			var responseBuffer = HttpParser.responseToBuffer(response);
 			chrome.sockets.tcp.send(receiveInfo.socketId, responseBuffer, function(sendInfo){
@@ -77,6 +78,7 @@ var HttpServer = (function(){
 		});
 		this.clientSockets = [];
 		this.onkill();
+		self.running = false;
 	}
 
 	function getInfo(socketId){

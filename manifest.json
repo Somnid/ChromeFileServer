@@ -6,6 +6,7 @@
   "app": {
     "background": {
       "scripts" : [
+        "js/utilities.js",
         "js/buffer-helper.js",
         "js/file-helper.js",
         "js/file-system.js",
@@ -15,7 +16,6 @@
         "js/mime-mapper.js",
         "js/http-server.js",
         "js/chromep.js",
-        "js/chrome-com.js",
         "js/file-server.js",
         "js/server-background-controller.js",
         "js/background.js"

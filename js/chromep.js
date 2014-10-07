@@ -31,8 +31,17 @@ chromep.runtime = (function(){
     });
   }
 
+  function getBackgroundPage(){
+    return new Promise(function(resolve, reject){
+      chrome.runtime.getBackgroundPage(function(backgroundPage){
+        resolve(backgroundPage);
+      });
+    });
+  }
+
   return {
-    sendMessage : sendMessage
+    sendMessage : sendMessage,
+    getBackgroundPage : getBackgroundPage
   };
 
 })();

@@ -2,17 +2,18 @@ var ServerView = (function(){
   function create(){
     var serverView = {};
     serverView.dom = {};
-    serverView.chromeCom = ChromeCom.create("server-channel");
     bind(serverView);
     serverView.gatherSelectors();
-    serverView.getStoredData()
-      .then(serverView.attachEvents);
+    serverView.attachEvents();
+    chromep.runtime.getBackgroundPage.then(function(backgroundPage){
+      serverView.backgroundPage = backgroundPage;
+      serverView.fileServer = backgroundPage.controller.fileServer;
+    })
     return serverView;
   }
   function bind(serverView){
     serverView.gatherSelectors = gatherSelectors.bind(serverView);
     serverView.attachEvents = attachEvents.bind(serverView);
-    serverView.getStoredData = getStoredData.bind(serverView);
     serverView.onStartClick = onStartClick.bind(serverView);
     serverView.onLocationClick = onLocationClick.bind(serverView);
     serverView.onKillClick = onKillClick.bind(serverView);
@@ -40,13 +41,17 @@ var ServerView = (function(){
 		//this.dom.startButton.disabled = true;
 		this.dom.killButton.disabled = false;
 
-		this.chromeCom.request("server.setup", {
-		  port : this.port,
-		  ip : this.ip
-		});
+    if(this.fileServer.isRunning()){
+      console.log("already running");
+    }else{
+  		this.fileServer.setup({
+  		  port : this.port,
+  		  ip : this.ip
+  		});
+    }
 
-		this.dom.serverInfo.innerText = this.ip + ":" + this.port;
-		this.dom.serverInfo.href = "http://" + this.ip + ":" + this.port;
+		this.dom.serverInfo.innerText = this.fileServer.options.ip + ":" + this.port;
+		this.dom.serverInfo.href = "http://" + this.fileServer.options.ip + ":" + this.port;
   }
   function onKill(){
     this.dom.startButton.disabled = false;
@@ -67,13 +72,6 @@ var ServerView = (function(){
     FileSystem.getUserFolder(force).then(function(entry){
 		  this.fsRoot = entry;
 		}.bind(this));
-  }
-  function getStoredData(){
-    var self = this;
-    return chromep.storage.local.get(["ip", "port"]).then(function(items){
-      self.ip = items.ip || "127.0.0.1";
-      self.port = items.port || "8788";
-    });
   }
   return {
     create : create

@@ -18,17 +18,15 @@ var ServerBackgroundController = (function(){
 	    var ip = items.ip || "127.0.0.1";
 	    var port = items.port || "1337";
 
-      return FileServer.create({
+      self.fileServer = FileServer.create({
         ip : ip,
         port : port
       });
-	  }).then(function(fileServer){
-	    //TODO: destroy server and window to prevent memory leaks
-	    self.fileServer = fileServer
-      /*self.win = chromep.app.window.create('html/main.html', {
+	  
+      self.win = chromep.app.window.create('html/main.html', {
 		    width: 400,
 		    height: 400
-	    });*/
+	    });
 	  }).catch(function(e){
 	    console.log("Startup Error:", e);
 	  });

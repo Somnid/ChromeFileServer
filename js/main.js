@@ -1,5 +1,7 @@
+var serverView;
+
 document.addEventListener("DOMContentLoaded", function(){
-  setTimeout(function(){
-    ServerView.create();
-  }, 3000);
+  Util.wait(3000).then(function(){
+  	serverView = ServerView.create();
+  });
 }, true);

@@ -5,10 +5,11 @@ var ServerView = (function(){
     bind(serverView);
     serverView.gatherSelectors();
     serverView.attachEvents();
-    chromep.runtime.getBackgroundPage.then(function(backgroundPage){
+    chromep.runtime.getBackgroundPage().then(function(backgroundPage){
       serverView.backgroundPage = backgroundPage;
       serverView.fileServer = backgroundPage.controller.fileServer;
     })
+    .then(serverView.getUserFolder)
     return serverView;
   }
   function bind(serverView){
@@ -26,6 +27,8 @@ var ServerView = (function(){
     this.dom.locationButton = document.getElementById("btn-location");
     this.dom.killButton = document.getElementById("btn-kill");
     this.dom.serverInfo = document.getElementById("server-info");
+    this.dom.ip = document.getElementById("ip");
+    this.dom.port = document.getElementById("port");
   }
   function attachEvents(){
     this.dom.startButton.addEventListener("click", this.onStartClick);
@@ -37,21 +40,32 @@ var ServerView = (function(){
 	    console.log("setup location first");
 	    return;
 	  }
+    if(!this.dom.ip.value){
+      console.log("setup ip first");
+      return;
+    }
+    if(!this.dom.port.value){
+      console.log("setup port first");
+      return;
+    }
+    if(!this.fileServer){
+      console.log("server not ready or failed to create");
+      return;
+    }
 
-		//this.dom.startButton.disabled = true;
+    this.ip = this.dom.ip.value;
+    this.port = this.dom.port.value;
+		this.dom.startButton.disabled = true;
 		this.dom.killButton.disabled = false;
 
     if(this.fileServer.isRunning()){
       console.log("already running");
     }else{
-  		this.fileServer.setup({
-  		  port : this.port,
-  		  ip : this.ip
-  		});
+      this.fileServer.start(this.ip, this.port, this.fsRoot);
     }
 
-		this.dom.serverInfo.innerText = this.fileServer.options.ip + ":" + this.port;
-		this.dom.serverInfo.href = "http://" + this.fileServer.options.ip + ":" + this.port;
+		this.dom.serverInfo.innerText = this.ip + ":" + this.port;
+		this.dom.serverInfo.href = "http://" + this.ip + ":" + this.port;
   }
   function onKill(){
     this.dom.startButton.disabled = false;
@@ -66,10 +80,17 @@ var ServerView = (function(){
   function onKillClick(){
     this.dom.startButton.disabled = true;
 		this.dom.killButton.disabld = false;
-		this.server.kill();
+		this.fileServer.kill();
   }
   function getUserFolder(force){
-    FileSystem.getUserFolder(force).then(function(entry){
+    return FileSystem.getUserFolder(force).then(function(entry){
+      if(!entry){
+        this.dom.locationButton.classList.remove("valid");
+        this.dom.locationButton.classList.add("invalid");
+      }else{
+        this.dom.locationButton.classList.remove("invalid");
+        this.dom.locationButton.classList.add("valid");
+      }
 		  this.fsRoot = entry;
 		}.bind(this));
   }

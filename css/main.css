@@ -11,6 +11,14 @@ html {
   font-size: 16px;
   text-align: center;
 }
+#server-input {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+}
+#server-input input {
+  flex-grow: 1;
+}
 body {
   display: flex;
   flex-flow: column nowrap;
@@ -20,4 +28,14 @@ button {
   background: none;
   border: 2px solid #cccccc;
   border-radius: 6px;
+}
+button.invalid {
+  border: 2px solid #cc0000;
+}
+button.valid {
+  border: 2px solid #00cc00;
+}
+button.invalid::after {
+  content : "";
+  background-image: url(data:image/svg+xml;utf8,<svg width="20" height="20"><path d="M0,0L20,20M0,20L20,0" stroke-width="3" stroke-color="red"></svg>);
 }

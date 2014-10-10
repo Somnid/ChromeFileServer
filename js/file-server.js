@@ -7,34 +7,57 @@ var FileServer = (function(){
   }
   function bind(fileServer){
     fileServer.setup = setup.bind(fileServer);
+    fileServer.start = start.bind(fileServer);
+    fileServer.kill = kill.bind(fileServer);
     fileServer.onRequest = onRequest.bind(fileServer);
     fileServer.isRunning = isRunning.bind(fileServer);
+    fileServer.setupRouter = setupRouter.bind(fileServer);
     fileServer.setFileSystemRoot = setFileSystemRoot.bind(fileServer);
   }
-  function onRequest(uri){
-    console.log("File Server: processing request for: ", uri);
-    this.router.route(uri)
+  function onRequest(request){
+    console.log("File Server: processing request for: ", request.uri);
+    if(!this.router){
+      console.log("Router was not set yet (need to set filesystem root");
+      return;
+    }
+    return this.router.route(request);
   }
   function setup(options){
     this.options = options;
-    this.router = Router.create({
-      fsRoot : this.fsRoot
-    });
+    if(options.fsRoot){
+      this.setFileSystemRoot(options.fsRoot);
+    }
     this.httpServer = HttpServer.create({
       onStart : options.onStart,
       onKill : options.onKill,
       onRequest : this.onRequest,
       onError : options.onError,
-      autoStart : !!options.ip && !!options.port,
+      autoStart : !!options.ip && !!options.port && !!options.fsRoot,
       port : options.port,
       ip : options.ip
     });
   }
+  function setupRouter(fsRoot){
+    this.router = Router.create({
+      fsRoot : fsRoot
+    });
+  }
   function setFileSystemRoot(entry){
     this.fsRoot = entry;
+    this.setupRouter(entry);
   }
   function isRunning(){
     return this.httpServer.running;
+  }
+  function start(ip, port, fsRoot){
+    this.setFileSystemRoot(fsRoot);
+    this.httpServer.start({
+      ip : ip,
+      port : port
+    });
+  }
+  function kill(){
+    this.httpServer.kill();
   }
   return {
     create : create

@@ -8,8 +8,9 @@ var Router = (function(){
   function bind(router){
     router.route = route.bind(router);
   }
-  function route(uri){
+  function route(request){
     return new Promise(function(resolve, reject){
+      uri = request.uri;
       uri = FileHelper.removePreceedingSlash(uri);
       uri = FileHelper.removeQueryString(uri);
       if(FileHelper.isDirectory(uri)){

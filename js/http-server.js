@@ -13,20 +13,20 @@ var HttpServer = (function(){
 		bind(server);
 
     	if(options.autoStart){
-		  server.setup(options);
+		  server.start(options);
     	}
 		return server;
 	}
 
 	function bind(server){
-		server.setup = setup.bind(server);
+		server.start = start.bind(server);
 		server.kill = kill.bind(server);
 		server.onAccept = onAccept.bind(server);
 		server.onReceive = onReceive.bind(server);
 		server.onReceiveError = onReceiveError.bind(server);
 	}
 
-	function setup(options){
+	function start(options){
 		var self = this;
 
 		options.port = parseInt(options.port);

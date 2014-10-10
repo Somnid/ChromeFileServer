@@ -14,13 +14,11 @@ var ServerBackgroundController = (function(){
   }
   function startServer(){
     var self = this;
-	  chromep.storage.local.get(["ip", "port"]).then(function(items){
-	    var ip = items.ip || "127.0.0.1";
-	    var port = items.port || "1337";
-
+	  chromep.storage.local.get(["ip", "port", "fsRoot"]).then(function(items){
       self.fileServer = FileServer.create({
-        ip : ip,
-        port : port
+        ip : items.ip,
+        port : items.port,
+        fsRoot : items.fsRoot
       });
 	  
       self.win = chromep.app.window.create('html/main.html', {

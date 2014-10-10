@@ -9,6 +9,7 @@ var MimeMapper = (function(){
 		"svg"  : "image/svg+xml",
 		"gif"  : "image/gif",
 		"jpeg" : "image/jpeg",
+		"jpg"  : "image/jpeg",
 		"png"  : "image/png",
 		"ico"  : "image/x-icon",
 		"map"  : "application/json" //not real but lets you view source

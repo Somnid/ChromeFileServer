@@ -14,10 +14,16 @@ html {
 #server-input {
   display: flex;
   flex-flow: row nowrap;
-  justify-content: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 #server-input input {
   flex-grow: 1;
+  margin-right: 10px;
+  font-size: 20px;
+}
+#server-input input:last-child{
+  margin-right: 0px;
 }
 body {
   display: flex;
@@ -25,15 +31,22 @@ body {
   justify-content: flex-start;
 }
 button {
-  background: none;
-  border: 2px solid #cccccc;
+  background: #0000ee;
   border-radius: 6px;
+  border: none;
+  margin-bottom: 5px;
+  font-size: 20px;
+  color: #fff;
+  cursor: pointer;
 }
 button.invalid {
-  border: 2px solid #cc0000;
+  background: #ee0000;
 }
 button.valid {
-  border: 2px solid #00cc00;
+  background: #00ee00;
+}
+button.waiting {
+  background: #ccc;
 }
 button.invalid::after {
   content : "";

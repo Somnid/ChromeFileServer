@@ -32,7 +32,7 @@ var SavedField = (function(){
   }
   function getStoredValue(){
     chrome.storage.local.get(this.fieldName, function(values){
-      this.value = values[this.fieldName];
+      this.value = values[this.fieldName] === undefined ? "" : values[this.fieldName];
     }.bind(this));
   }
   return {

@@ -3,16 +3,13 @@ var ServerView = (function(){
     var serverView = {};
     serverView.dom = {};
     bind(serverView);
-    serverView.gatherSelectors();
-    serverView.attachEvents();
-    chromep.runtime.getBackgroundPage().then(function(backgroundPage){
-      serverView.backgroundPage = backgroundPage;
-      serverView.fileServer = backgroundPage.controller.fileServer;
-    })
-    .then(serverView.getUserFolder)
+    
+    serverView.init();
+    
     return serverView;
   }
   function bind(serverView){
+    serverView.init = init.bind(serverView);
     serverView.gatherSelectors = gatherSelectors.bind(serverView);
     serverView.attachEvents = attachEvents.bind(serverView);
     serverView.onStartClick = onStartClick.bind(serverView);
@@ -21,6 +18,15 @@ var ServerView = (function(){
     serverView.getUserFolder = getUserFolder.bind(serverView);
     serverView.onKill = onKill.bind(serverView);
     serverView.onServerError = onServerError.bind(serverView);
+  }
+  function init(){
+    this.gatherSelectors();
+    this.attachEvents();
+    chromep.runtime.getBackgroundPage().then(function(backgroundPage){
+      this.backgroundPage = backgroundPage;
+      this.fileServer = backgroundPage.controller.fileServer;
+    }.bind(this))
+    .then(this.getUserFolder);
   }
   function gatherSelectors(){
     this.dom.startButton = document.getElementById("btn-start");
@@ -85,9 +91,11 @@ var ServerView = (function(){
   function getUserFolder(force){
     return FileSystem.getUserFolder(force).then(function(entry){
       if(!entry){
+        this.dom.locationButton.classList.remove("waiting");
         this.dom.locationButton.classList.remove("valid");
         this.dom.locationButton.classList.add("invalid");
       }else{
+        this.dom.locationButton.classList.remove("waiting");
         this.dom.locationButton.classList.remove("invalid");
         this.dom.locationButton.classList.add("valid");
       }

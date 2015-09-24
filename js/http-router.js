@@ -1,4 +1,9 @@
 var Router = (function(){
+  
+  var defaults = {
+    fsRoot : null //required
+  };
+  
   function create(options){
     var router = {};
     router.fsRoot = options.fsRoot;
@@ -7,26 +12,38 @@ var Router = (function(){
   }
   function bind(router){
     router.route = route.bind(router);
+    router.readFile = readFile.bind(router);
   }
   function route(request){
-    return new Promise(function(resolve, reject){
+    return new Promise((resolve, reject) => {
       uri = request.uri;
       uri = FileHelper.removePreceedingSlash(uri);
       uri = FileHelper.removeQueryString(uri);
       if(FileHelper.isDirectory(uri)){
         uri += "index.html";
       }
-      this.fsRoot.getFile(uri, { create : false }, function(fileEntry){
-				FileSystem.readFile(fileEntry).then(function(data){
-				  resolve(HttpHelper.fileResponse(fileEntry, data));
+     
+      this.readFile(uri)
+        .then(resolve)
+				.catch(error => {
+				  if(error.name == "NotFoundError"){
+				    resolve(HttpHelper.notFoundResponse("Not Found :("));
+				  }else{
+				    reject(error);
+				  }
 				});
-			},function(error){
-				if(error.name == "NotFoundError"){
-				  resolve(HttpHelper.notFoundResponse("Not Found :("));
-				}
-				reject(error);
-			});
-		}.bind(this));
+		});
+  }
+  function readFile(uri){
+    return new Promise((resolve, reject) => {
+      FileTools.readRelativeFile(this.fsRoot, uri)
+        .then(file => {
+				  resolve(HttpHelper.fileResponse(file.fileEntry, file.data));
+				})
+				.catch(error => {
+				  reject(error);
+				});
+    });
   }
   return {
     create : create

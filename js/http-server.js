@@ -12,9 +12,9 @@ var HttpServer = (function(){
 
 		bind(server);
 
-    	if(options.autoStart){
+    if(options.autoStart){
 		  server.start(options);
-    	}
+    }
 		return server;
 	}
 

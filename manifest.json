@@ -6,7 +6,8 @@
   "app": {
     "background": {
       "scripts" : [
-        "js/utilities.js",
+        "js/libs/utilities.js",
+        "js/libs/file-tools.js",
         "js/buffer-helper.js",
         "js/file-helper.js",
         "js/file-system.js",

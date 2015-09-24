@@ -30,22 +30,7 @@ var FileSystem = (function(){
       });
     });
   }
-  function readFile(fileEntry){
-    return new Promise(function(resolve, reject){
-      fileEntry.file(function(file){
-        var fileReader = new FileReader();
-        fileReader.onload = function(e){
-          resolve(e.target.result);
-        };
-        fileReader.onerror = function(e){
-          reject(e);
-        };
-        fileReader.readAsArrayBuffer(file);
-      });
-    });
-  }
   return {
-    getUserFolder : getUserFolder,
-    readFile : readFile
+    getUserFolder : getUserFolder
   };
 })();
